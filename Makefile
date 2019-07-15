@@ -30,9 +30,8 @@ OPTIONS =  $(OPT)
 #SYSTYPE="OPA-Cluster64-Gnu"
 
 
-FFTW_INCL = -I/users/home/boyd/local/include
-FFTW_LIBS = -L/users/home/boyd/local/lib
-
+FFTW_INCL = -I/cosma/home/millgas/cs390/local/include
+FFTW_LIBS = -L/cosma/home/millgas/cs390/local/lib
 
 
 CC       =   mpicc        # sets the C-compiler (default)
