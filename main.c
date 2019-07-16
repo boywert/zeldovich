@@ -171,7 +171,7 @@ void displacement_fields(void)
 			    continue;
 			}
 
-
+		      delta.re = delta.im = vel_prefac.re = vel_prefac.im = 0;
 #ifdef CORRECT_CIC
 		      /* do deconvolution of CIC interpolation */
 		      fx = fy = fz = 1;
