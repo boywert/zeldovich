@@ -503,7 +503,7 @@ void prepare_zeldovich(void) {
   double *tmp;
 
   plan = rfftw3d_mpi_create_plan(MPI_COMM_WORLD,
-				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
+				 Nmesh, Nmesh, Nmesh, FFTW_REAL_TO_COMPLEX, FFTW_ESTIMATE);
 
   rfftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
@@ -526,7 +526,7 @@ void prepare_zeldovich(void) {
  
 
   plan = rfftw3d_mpi_create_plan(MPI_COMM_WORLD,
-				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
+				 Nmesh, Nmesh, Nmesh, FFTW_REAL_TO_COMPLEX, FFTW_ESTIMATE);
 
   rfftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
