@@ -473,31 +473,35 @@ void set_units(void)		/* ... set some units */
   Hubble = HUBBLE * UnitTime_in_s;
 }
 
-void prepare_zeldovich(int total_size) {
+void prepare_zeldovich(void) {
   int i,j,k;
   fftw_complex *delta, *deltadot, *work1, *work2;
-  fftwnd_mpi_plan plan1, plan2; 
+  fftwnd_mpi_plan plan1, plan2;
+  int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
+  plan1 = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
+				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
+  plan2 = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
+				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
+  fftwnd_mpi_local_sizes(plan1, &lnx, &lx_start,
+			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
+  printf("before alloc\n");
   work1 = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
   work2 = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
   delta = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
   deltadot = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
-  for(i = 0; i < Local_nx; i++)
+  for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
 	delta[(i * Nmesh + j) * (Nmesh) + k].re = 0;
 	delta[(i * Nmesh + j) * (Nmesh) + k].im = 0;
       }
-  for(i = 0; i < Local_nx; i++)
+  for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
 	deltadot[(i * Nmesh + j) * (Nmesh) + k].re = 0;
 	deltadot[(i * Nmesh + j) * (Nmesh) + k].im = 0;
       }
   
-  plan1 = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
-				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
-  plan2 = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
-				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
   fftwnd_mpi(plan1, 1, delta, work1, FFTW_NORMAL_ORDER);		/** FFT **/
   fftwnd_mpi(plan2, 1, deltadot, work2, FFTW_NORMAL_ORDER);		/** FFT **/
 
@@ -538,7 +542,7 @@ void initialize_ffts(void)
       fflush(stdout);
     }
 
-  prepare_zeldovich(total_size);
+  prepare_zeldovich();
 
   Slab_to_task = malloc(sizeof(int) * Nmesh);
   slab_to_task_local = malloc(sizeof(int) * Nmesh);
