@@ -523,7 +523,7 @@ void prepare_zeldovich(void) {
   for (i = 0; i < lnx; ++i)
     for (j = 0; j < Nmesh; ++j)
       for (k = 0; k < Nmesh; ++k)
-	tmp1[(i*Nmesh + j) * (2*(Nmesh/2+1)) + k] = read_tmp[((i + lx_start)*Nmesh + j) * Nmesh + k];
+	tmp1[(i*Nmesh + j) * (2*(Nmesh/2+1)) + k] = read_tmp[((i)*Nmesh + j) * Nmesh + k];
 
 	     
   rfftwnd_mpi(plan, 1, tmp1, work, FFTW_NORMAL_ORDER);		/** FFT **/
@@ -554,7 +554,7 @@ void prepare_zeldovich(void) {
   for (i = 0; i < lnx; ++i)
     for (j = 0; j < Nmesh; ++j)
       for (k = 0; k < Nmesh; ++k)
-	tmp2[(i*Nmesh + j) * (2*(Nmesh/2+1)) + k] = read_tmp[((i + lx_start)*Nmesh + j) * Nmesh + k];
+	tmp2[(i*Nmesh + j) * (2*(Nmesh/2+1)) + k] = read_tmp[((i)*Nmesh + j) * Nmesh + k];
 
   rfftwnd_mpi(plan, 1, tmp2, work, FFTW_NORMAL_ORDER);		/** FFT **/
   DeltaDotField = (fftw_complex *) tmp2;
