@@ -497,7 +497,8 @@ void prepare_zeldovich(void) {
   fftwnd_mpi_plan plan;
   double inv;
   int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
- 
+  FILE *fp;
+  double *tmp;
 
   plan = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
 				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
@@ -508,14 +509,17 @@ void prepare_zeldovich(void) {
  
   work = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
   DeltaField = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
-
+  tmp = (double *) malloc(total_size * sizeof(double));
  
-  
+  fp = fopen(FileWithDelta, "rb");
+  fseek(fp, lx_start*Nmesh*Nmesh, SEEK_SET);
+  fread(tmp, total_size, sizeof(double), fp);
+  fclose(fp);
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
-	DeltaField[(i * Nmesh + j) * (Nmesh) + k].re = 1;
-	DeltaField[(i * Nmesh + j) * (Nmesh) + k].im = 1;
+	DeltaField[(i * Nmesh + j) * (Nmesh) + k].re = tmp[(i * Nmesh + j) * (Nmesh) + k];
+	DeltaField[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
       }
 
  
@@ -537,12 +541,15 @@ void prepare_zeldovich(void) {
   DeltaDotField = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
 
  
-  
+  fp = fopen(FileWithDeltaDot, "rb");
+  fseek(fp, lx_start*Nmesh*Nmesh, SEEK_SET);
+  fread(tmp, total_size, sizeof(double), fp);
+  fclose(fp);
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
-	DeltaDotField[(i * Nmesh + j) * (Nmesh) + k].re = 1;
-	DeltaDotField[(i * Nmesh + j) * (Nmesh) + k].im = 1;
+	DeltaDotField[(i * Nmesh + j) * (Nmesh) + k].re = tmp[(i * Nmesh + j) * (Nmesh) + k];
+	DeltaDotField[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
       }
 
   fftwnd_mpi(plan, 1, DeltaDotField, work, FFTW_NORMAL_ORDER);		/** FFT **/
@@ -558,6 +565,7 @@ void prepare_zeldovich(void) {
 	VelPrefac[index].im = (DeltaDotField[index].im*DeltaField[index].re + DeltaDotField[index].re*DeltaField[index].im)*inv;
       }
   free(DeltaDotField);
+  printf("Finished working on DeltaField and VelPrefac\n");
 }
 
 void initialize_ffts(void)
