@@ -491,11 +491,11 @@ void prepare_zeldovich(void) {
   delta = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
 
   printf("debug: Line %d\n",__LINE__);
-
+  
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
-	printf("%d %d %d -> %d\n",i,j,k, (i * Nmesh + j) * (Nmesh) + k);
+	printf("%d %d %d -> %d / %d\n",i,j,k, (i * Nmesh + j) * (Nmesh) + k, total_size);
 	delta[(i * Nmesh + j) * (Nmesh) + k].re = 0;
 	delta[(i * Nmesh + j) * (Nmesh) + k].im = 0;
       }
