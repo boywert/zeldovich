@@ -509,7 +509,7 @@ void prepare_zeldovich(void) {
   rfftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
   
-  printf("totalsize = %d\n",total_size);
+  printf("Task: %d totalsize = %d, nx = %d, x_start = %d\n",ThisTask,total_size,lnx,lx_start);
   work = (fftw_real *) malloc(total_size * sizeof(fftw_real));
   tmp1 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
   tmp2 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
