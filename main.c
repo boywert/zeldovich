@@ -528,7 +528,7 @@ void prepare_zeldovich(void) {
   fftwnd_mpi(plan, 1, DeltaDotField, work, FFTW_NORMAL_ORDER);		/** FFT **/
   free(work);
   fftwnd_mpi_destroy_plan(plan);
-
+  VelPrefac = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
