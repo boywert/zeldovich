@@ -106,9 +106,10 @@ extern int  IdStart;
 
 extern rfftwnd_mpi_plan Inverse_plan, Inverse_plan2;
 extern fftw_real        *Disp, *Velq, *Workspace, *Workspace2;
+extern fftw_real        *tmp1, *tmp2, *tmp3;
 extern fftw_complex     *Cdata, *Cdata2;
 extern fftw_complex	*delta_complx, *deltadot_complx;
-extern fftw_complex     *DeltaField, *VelPrefac;
+extern fftw_complex     *DeltaField, *DeltaDotField, *VelPrefac;
 extern double UnitTime_in_s, UnitLength_in_cm, UnitMass_in_g, UnitVelocity_in_cm_per_s;
 extern double InputSpectrum_UnitLength_in_cm;
 extern double G, Hubble;

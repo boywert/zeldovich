@@ -1,7 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <drfftw_mpi.h>
-#include <dfftw_mpi.h>
 #include <mpi.h>
 #include <gsl/gsl_rng.h>
 
@@ -196,14 +195,14 @@ void displacement_fields(void)
 
 		      /* end deconvolution */
 #endif
+
 		      if(k > 0)
 			{
 			  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 			    {
-			      //printf("rank %d t1 index = %d\n",ThisTask, ((i - Local_x_start) * Nmesh + j) * (Nmesh) + k);
-			      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
-			      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
-			      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
+			      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
+			      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
+			      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
 			      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
 			      
 			      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
@@ -229,10 +228,10 @@ void displacement_fields(void)
 				    {
 				      jj = Nmesh - j;	/* note: j!=0 surely holds at this point */
 				      //printf("rank %d t2 index = %d\n",ThisTask, ((i - Local_x_start) * Nmesh + j) * (Nmesh) + k);
-				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
-				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
-				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
-				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
+				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
+				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
+				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
 				      
 				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * delta.im;
@@ -243,10 +242,10 @@ void displacement_fields(void)
 				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
 					kvec[axes] / kmag2 *  (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 				      //printf("rank %d t3 index = %d\n",ThisTask, ((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k);
-				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
-				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
-				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
-				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
+				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].re;
+				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].im;
+				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].re;
+				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].im;
 				      
 				      Cdata[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * delta.im;
@@ -275,10 +274,10 @@ void displacement_fields(void)
 				  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 				    {
 				      //printf("rank %d t4 index = %d\n",ThisTask, ((i - Local_x_start) * Nmesh + j) * (Nmesh) + k);
-     				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
-				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
-				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
-				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+     				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
+				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
+				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
+				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
 				      
 				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * delta.im;
@@ -294,10 +293,10 @@ void displacement_fields(void)
 				  if(ii >= Local_x_start && ii < (Local_x_start + Local_nx))
 				    {
 				      //printf("rank %d t5 index = %d\n",ThisTask, ((ii - Local_x_start) * Nmesh + jj) * (Nmesh) + k);
-				      delta.re =  smth*DeltaField[((ii - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
-				      delta.im =  smth*DeltaField[((ii - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
-				      vel_prefac.re =  VelPrefac[((ii - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
-				      vel_prefac.im =  VelPrefac[((ii - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
+				      delta.re =  smth*DeltaField[((ii - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].re;
+				      delta.im =  smth*DeltaField[((ii - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].im;
+				      vel_prefac.re =  VelPrefac[((ii - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].re;
+				      vel_prefac.im =  VelPrefac[((ii - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].im;
 
 				      
 				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
@@ -496,78 +495,67 @@ void set_units(void)		/* ... set some units */
 
 void prepare_zeldovich(void) {
   int i,j,k,index;
-  fftw_complex *DeltaDotField, *work;
-  fftwnd_mpi_plan plan;
+  fftw_real *work;
+  rfftwnd_mpi_plan plan;
   double inv;
   int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
   FILE *fp;
   double *tmp;
 
-  plan = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
+  plan = rfftw3d_mpi_create_plan(MPI_COMM_WORLD,
 				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
 
-  fftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
+  rfftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
   
  
-  work = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
-  DeltaField = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
-  tmp = (double *) malloc(total_size * sizeof(double));
- 
+  work = (fftw_real *) malloc(total_size * sizeof(fftw_real));
+  tmp1 = (fftw_real *) malloc(total_size * sizeof(fftw_real));
+  tmp2 = (fftw_real *) malloc(total_size * sizeof(fftw_real));
+  tmp3 = (fftw_real *) malloc(total_size * sizeof(fftw_real));
+  
   fp = fopen(FileWithDelta, "rb");
   fseek(fp, lx_start*Nmesh*Nmesh, SEEK_SET);
-  fread(tmp, total_size, sizeof(double), fp);
+  fread(tmp1, total_size, sizeof(double), fp);
   fclose(fp);
-  for(i = 0; i < lnx; i++)
-    for(j = 0; j < Nmesh; j++)
-      for(k = 0; k < Nmesh; k++) {
-	DeltaField[(i * Nmesh + j) * (Nmesh) + k].re = tmp[(i * Nmesh + j) * (Nmesh) + k];
-	DeltaField[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
-      }
-
- 
-  fftwnd_mpi(plan, 1, DeltaField, work, FFTW_NORMAL_ORDER);		/** FFT **/
- 
+  rfftwnd_mpi(plan, 1, tmp1, work, FFTW_NORMAL_ORDER);		/** FFT **/
+  DeltaField = (fftw_complex *) tmp1;
   free(work);
-  fftwnd_mpi_destroy_plan(plan);
+  rfftwnd_mpi_destroy_plan(plan);
+  
  
-  MPI_Barrier(MPI_COMM_WORLD);
 
-  plan = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
+  plan = rfftw3d_mpi_create_plan(MPI_COMM_WORLD,
 				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
 
-  fftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
+  rfftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
   
  
-  work = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
-  DeltaDotField = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
+  work = (fftw_real *) malloc(total_size * sizeof(fftw_real));
+
 
  
   fp = fopen(FileWithDeltaDot, "rb");
   fseek(fp, lx_start*Nmesh*Nmesh, SEEK_SET);
-  fread(tmp, total_size, sizeof(double), fp);
+  fread(tmp2, total_size, sizeof(double), fp);
   fclose(fp);
-  for(i = 0; i < lnx; i++)
-    for(j = 0; j < Nmesh; j++)
-      for(k = 0; k < Nmesh; k++) {
-	DeltaDotField[(i * Nmesh + j) * (Nmesh) + k].re = tmp[(i * Nmesh + j) * (Nmesh) + k];
-	DeltaDotField[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
-      }
 
-  fftwnd_mpi(plan, 1, DeltaDotField, work, FFTW_NORMAL_ORDER);		/** FFT **/
+  rfftwnd_mpi(plan, 1, tmp2, work, FFTW_NORMAL_ORDER);		/** FFT **/
+  DeltaDotField = (fftw_complex *) tmp2;
   free(work);
-  fftwnd_mpi_destroy_plan(plan);
-  VelPrefac = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
+  rfftwnd_mpi_destroy_plan(plan);
+  
+  VelPrefac = (fftw_complex *) tmp3;
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
-      for(k = 0; k < Nmesh; k++) {
-	index = (i * Nmesh + j) * (Nmesh) + k;
+      for(k = 0; k < Nmesh/2+1; k++) {
+	index = (i * Nmesh + j) * (Nmesh/2+1) + k;
 	inv = 1./(DeltaField[index].re*DeltaField[index].re + DeltaField[index].im*DeltaField[index].im);
 	VelPrefac[index].re = (DeltaDotField[index].re*DeltaField[index].re + DeltaDotField[index].im*DeltaField[index].im)*inv;
 	VelPrefac[index].im = (DeltaDotField[index].im*DeltaField[index].re + DeltaDotField[index].re*DeltaField[index].im)*inv;
       }
-  free(DeltaDotField);
+  
   printf("Finished working on DeltaField and VelPrefac\n");
   MPI_Barrier(MPI_COMM_WORLD);
 }
@@ -645,8 +633,9 @@ void initialize_ffts(void)
 
 void free_ffts(void)
 {
-  free(DeltaField);
-  free(VelPrefac);
+  free(tmp1);
+  free(tmp2);
+  free(tmp3);
   free(Workspace);
   free(Disp);
   free(Workspace2);
