@@ -71,15 +71,16 @@ void displacement_fields(void)
   int i, j, k, ii, jj, kk, axes;
   int n;
   int sendTask, recvTask;
-  double fac, vel_prefac;
+  double fac;
   double kvec[3], kmag, kmag2, p_of_k;
   double u, v, w;
   double f1, f2, f3, f4, f5, f6, f7, f8;
   double dis, vel, maxdisp, max_disp_glob;
   double  hubble_a;
-  fftw_complex delta;
+  double smth = 1.0;
+  fftw_complex delta,vel_prefac;
 #ifdef CORRECT_CIC
-  double fx, fy, fz, ff, smth;
+  double fx, fy, fz, ff;
 #endif
 
   if(ThisTask == 0)
@@ -88,9 +89,7 @@ void displacement_fields(void)
       fflush(stdout);
     }
 
-  vel_prefac = DEBA18_prefac(2*PI/Box, InitTime);
-  delta.im = 0.0;
-  delta.re = 0.0;
+
   hubble_a =
     Hubble * sqrt(Omega / pow(InitTime, 3) + OmegaRadiation/ pow(InitTime, 4) +
 		  (1 - Omega - OmegaLambda ) / pow(InitTime, 2) + OmegaLambda);  
@@ -172,7 +171,6 @@ void displacement_fields(void)
 			    continue;
 			}
 
-		      //delta = fac * sqrt(p_of_k) / Dplus;
 
 #ifdef CORRECT_CIC
 		      /* do deconvolution of CIC interpolation */
@@ -195,23 +193,26 @@ void displacement_fields(void)
 		      ff = 1 / (fx * fy * fz);
 		      smth = ff * ff;
 
-		      delta.re *= smth;
-		      delta.im *= smth;
 		      /* end deconvolution */
 #endif
 		      if(k > 0)
 			{
 			  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 			    {
+			      delta.re =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
+			      delta.im =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+			      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
+			      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+			      
 			      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
 				-kvec[axes] / kmag2 * delta.im;
 			      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
 				kvec[axes] / kmag2 * delta.re;
 			      
 			      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
-				-kvec[axes] / kmag2 * delta.re * DEBA18_prefac(kmag, InitTime);
+				-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
 			      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
-				kvec[axes] / kmag2 * delta.re * DEBA18_prefac(kmag, InitTime);
+				kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 			    }
 			}
 		      else	/* k=0 plane needs special treatment */
@@ -225,27 +226,34 @@ void displacement_fields(void)
 				  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 				    {
 				      jj = Nmesh - j;	/* note: j!=0 surely holds at this point */
-
+				      
+				      delta.re =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
+				      delta.im =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
+				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+				      
 				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * delta.im;
 				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
 					kvec[axes] / kmag2 * delta.re;
+				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
+					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
+				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
+					kvec[axes] / kmag2 *  (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 
+				      delta.re =  DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
+				      delta.im =  DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
+				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
+				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
+				      
 				      Cdata[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * delta.im;
 				      Cdata[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					-kvec[axes] / kmag2 * delta.re;
-
-
-				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * delta.re  * DEBA18_prefac(kmag, InitTime);
-				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * delta.re  * DEBA18_prefac(kmag, InitTime);
-
+					kvec[axes] / kmag2 * delta.re;
 				      Cdata2[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * delta.re * DEBA18_prefac(kmag, InitTime);
+					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
 				      Cdata2[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					-kvec[axes] / kmag2 * delta.re  * DEBA18_prefac(kmag, InitTime);
+					kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 				    }
 				}
 			    }
@@ -264,28 +272,40 @@ void displacement_fields(void)
 
 				  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 				    {
+     				      delta.re =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
+				      delta.im =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
+				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+				      
 				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * delta.im;
 				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
 					kvec[axes] / kmag2 * delta.re;
 
 				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * delta.re  * DEBA18_prefac(kmag, InitTime);
+					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
 				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * delta.re * DEBA18_prefac(kmag, InitTime);
+					kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 				    }
 
 				  if(ii >= Local_x_start && ii < (Local_x_start + Local_nx))
 				    {
+
+				      delta.re =  DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
+				      delta.im =  DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
+				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
+				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
+
+				      
 				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
 					    k].re = -kvec[axes] / kmag2 * delta.im;
 				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
 					    k].im = -kvec[axes] / kmag2 * delta.re;
 				      
 				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
-					     k].re = -kvec[axes] / kmag2 * delta.re* DEBA18_prefac(kmag, InitTime);
+					     k].re = -kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
 				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
-					    k].im = -kvec[axes] / kmag2 * delta.re * DEBA18_prefac(kmag, InitTime);
+					    k].im = -kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 				    }
 				}
 			    }
