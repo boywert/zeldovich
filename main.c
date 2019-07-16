@@ -95,7 +95,7 @@ void displacement_fields(void)
 		  (1 - Omega - OmegaLambda ) / pow(InitTime, 2) + OmegaLambda);  
   
   if(ThisTask == 0)
-    printf("InitTime = %g vel_prefac= %g  hubble_a=%g fom=%g \n", InitTime, vel_prefac, hubble_a, vel_prefac/hubble_a/InitTime*sqrt(InitTime));
+    printf("InitTime = %g\n", InitTime);
 
   
   fac = pow(2 * PI / Box, 1.5);
