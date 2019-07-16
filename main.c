@@ -576,7 +576,8 @@ void prepare_zeldovich(void) {
 	  printf("1000: %g %g\n",VelPrefac[index].re,VelPrefac[index].im);
       }
   
-  printf("Finished working on DeltaField and VelPrefac\n");
+  if(!ThisTask)
+    printf("Finished working on DeltaField and VelPrefac\n");
   MPI_Barrier(MPI_COMM_WORLD);
 }
 
