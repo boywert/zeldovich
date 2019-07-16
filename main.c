@@ -500,7 +500,7 @@ void prepare_zeldovich(void) {
   double inv;
   int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
   FILE *fp;
-  double *tmp;
+  double *read_tmp;
   
   int additional = (Nmesh) * (2 * (Nmesh / 2 + 1));	/* additional plane on the right side */
   plan = rfftw3d_mpi_create_plan(MPI_COMM_WORLD,
@@ -514,14 +514,24 @@ void prepare_zeldovich(void) {
   tmp1 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
   tmp2 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
   tmp3 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
+  read_tmp = (double *) malloc( (lnx*Nmesh*Nmesh) * sizeof(double));
   
   fp = fopen(FileWithDelta, "rb");
   fseek(fp, (lx_start*Nmesh*Nmesh)*sizeof(double), SEEK_SET);
-  fread(tmp1, total_size, sizeof(double), fp);
+  fread(read_tmp, lnx * Nmesh * Nmesh, sizeof(double), fp);
   fclose(fp);
+  for (i = 0; i < lnx; ++i)
+    for (j = 0; j < Nmesh; ++j)
+      for (k = 0; k < Nmesh; ++k)
+	tmp1[(i*Nmesh + j) * (2*(Nmesh/2+1)) + k] = read_tmp[((i + lx_start)*Nmesh + j) * Nmesh + k];
+
+	     
   rfftwnd_mpi(plan, 1, tmp1, work, FFTW_NORMAL_ORDER);		/** FFT **/
   DeltaField = (fftw_complex *) tmp1;
   free(work);
+  free(read_tmp);
+	     
+	     
   rfftwnd_mpi_destroy_plan(plan);
   
  
@@ -538,10 +548,13 @@ void prepare_zeldovich(void) {
 
  
   fp = fopen(FileWithDeltaDot, "rb");
-  printf("Rank %d x_start %d: %d %d\n",ThisTask, lx_start, (int)sizeof(fftw_real), (int)sizeof(double));
   fseek(fp, (lx_start*Nmesh*Nmesh)*sizeof(double), SEEK_SET);
-  fread(tmp2, total_size, sizeof(double), fp);
+  fread(read_tmp, lnx * Nmesh * Nmesh, sizeof(double), fp);
   fclose(fp);
+  for (i = 0; i < lnx; ++i)
+    for (j = 0; j < Nmesh; ++j)
+      for (k = 0; k < Nmesh; ++k)
+	tmp2[(i*Nmesh + j) * (2*(Nmesh/2+1)) + k] = read_tmp[((i + lx_start)*Nmesh + j) * Nmesh + k];
 
   rfftwnd_mpi(plan, 1, tmp2, work, FFTW_NORMAL_ORDER);		/** FFT **/
   DeltaDotField = (fftw_complex *) tmp2;
