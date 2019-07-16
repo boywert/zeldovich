@@ -509,7 +509,7 @@ void prepare_zeldovich(void) {
   rfftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
   
- 
+  printf("totalsize = %d\n",total_size);
   work = (fftw_real *) malloc(total_size * sizeof(fftw_real));
   tmp1 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
   tmp2 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
@@ -552,7 +552,7 @@ void prepare_zeldovich(void) {
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh/2+1; k++) {
-	index = (i * Nmesh + j) * (Nmesh/2+1) + k;
+	index = (i * Nmesh + j) * (Nmesh / 2 + 1) + k;
 	inv = 1./(DeltaField[index].re*DeltaField[index].re + DeltaField[index].im*DeltaField[index].im);
 	VelPrefac[index].re = (DeltaDotField[index].re*DeltaField[index].re + DeltaDotField[index].im*DeltaField[index].im)*inv;
 	VelPrefac[index].im = (DeltaDotField[index].im*DeltaField[index].re + DeltaDotField[index].re*DeltaField[index].im)*inv;
