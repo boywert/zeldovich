@@ -556,7 +556,7 @@ void prepare_zeldovich(void) {
 	inv = 1./(DeltaField[index].re*DeltaField[index].re + DeltaField[index].im*DeltaField[index].im);
 	VelPrefac[index].re = (DeltaDotField[index].re*DeltaField[index].re + DeltaDotField[index].im*DeltaField[index].im)*inv;
 	VelPrefac[index].im = (DeltaDotField[index].im*DeltaField[index].re + DeltaDotField[index].re*DeltaField[index].im)*inv;
-	if(1000 == ((i+lx_start) * Nmesh + j) * (Nmesh/2+1) + k )
+	if(1000 == (((i+lx_start) * Nmesh + j) * (Nmesh/2+1) + k) )
 	  printf("1000: %g %g\n",VelPrefac[index].re,VelPrefac[index].im);
       }
   
