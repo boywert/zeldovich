@@ -495,6 +495,7 @@ void prepare_zeldovich(void) {
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
+	printf("%d %d %d -> %d\n",i,j,k, (i * Nmesh + j) * (Nmesh) + k);
 	delta[(i * Nmesh + j) * (Nmesh) + k].re = 0;
 	delta[(i * Nmesh + j) * (Nmesh) + k].im = 0;
       }
