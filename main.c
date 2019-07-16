@@ -69,7 +69,7 @@ void displacement_fields(void)
   MPI_Request request;
   MPI_Status status;
   int i, j, k, ii, jj, kk, axes;
-  int n;
+  int n, index;
   int sendTask, recvTask;
   double fac;
   double kvec[3], kmag, kmag2, p_of_k;
@@ -133,7 +133,7 @@ void displacement_fields(void)
 		{
 		  for(k = 0; k < Nmesh / 2; k++)
 		    {
-		      printf("%d %d %d\n",i,j,k);
+   
 		      if(i == Nmesh / 2 || j == Nmesh / 2 || k == Nmesh / 2)
 			continue;
 		      if(i == 0 && j == 0 && k == 0)
@@ -200,6 +200,7 @@ void displacement_fields(void)
 			{
 			  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 			    {
+			      printf("index = %d\n", ((i - Local_x_start) * Nmesh + j) * (Nmesh) + k);
 			      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
 			      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
 			      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
@@ -227,7 +228,7 @@ void displacement_fields(void)
 				  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 				    {
 				      jj = Nmesh - j;	/* note: j!=0 surely holds at this point */
-				      
+				      printf("index = %d\n", ((i - Local_x_start) * Nmesh + j) * (Nmesh) + k);
 				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
 				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
 				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
@@ -241,7 +242,7 @@ void displacement_fields(void)
 					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
 				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
 					kvec[axes] / kmag2 *  (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
-
+				      printf("index = %d\n", ((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k);
 				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
 				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
 				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
@@ -273,6 +274,7 @@ void displacement_fields(void)
 
 				  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 				    {
+				      printf("index = %d\n", ((i - Local_x_start) * Nmesh + j) * (Nmesh) + k);
      				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
 				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
 				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
@@ -291,7 +293,7 @@ void displacement_fields(void)
 
 				  if(ii >= Local_x_start && ii < (Local_x_start + Local_nx))
 				    {
-
+				      printf("index = %d\n", ((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k);
 				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
 				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
 				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
