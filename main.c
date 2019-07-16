@@ -486,7 +486,7 @@ void prepare_zeldovich(void) {
 				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
     printf("debug: Line %d\n",__LINE__);
 
-  ftwnd_mpi_local_sizes(plan1, &lnx, &lx_start,
+  fftwnd_mpi_local_sizes(plan1, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
   printf("debug: Line %d\n",__LINE__);
   work1 = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
