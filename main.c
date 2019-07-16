@@ -528,7 +528,7 @@ void prepare_zeldovich(void) {
   free(work);
   fftwnd_mpi_destroy_plan(plan);
  
-
+  MPI_Barrier(MPI_COMM_WORLD);
 
   plan = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
 				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
@@ -566,6 +566,7 @@ void prepare_zeldovich(void) {
       }
   free(DeltaDotField);
   printf("Finished working on DeltaField and VelPrefac\n");
+  MPI_Barrier(MPI_COMM_WORLD);
 }
 
 void initialize_ffts(void)
