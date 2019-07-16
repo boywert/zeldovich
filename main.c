@@ -501,7 +501,8 @@ void prepare_zeldovich(void) {
   int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
   FILE *fp;
   double *tmp;
-
+  
+  int additional = (Nmesh) * (2 * (Nmesh / 2 + 1));	/* additional plane on the right side */
   plan = rfftw3d_mpi_create_plan(MPI_COMM_WORLD,
 				 Nmesh, Nmesh, Nmesh, FFTW_REAL_TO_COMPLEX, FFTW_ESTIMATE);
 
@@ -510,9 +511,9 @@ void prepare_zeldovich(void) {
   
  
   work = (fftw_real *) malloc(total_size * sizeof(fftw_real));
-  tmp1 = (fftw_real *) malloc(total_size * sizeof(fftw_real));
-  tmp2 = (fftw_real *) malloc(total_size * sizeof(fftw_real));
-  tmp3 = (fftw_real *) malloc(total_size * sizeof(fftw_real));
+  tmp1 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
+  tmp2 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
+  tmp3 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
   
   fp = fopen(FileWithDelta, "rb");
   fseek(fp, (lx_start*Nmesh*Nmesh)*sizeof(double), SEEK_SET);
