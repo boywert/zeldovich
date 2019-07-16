@@ -506,14 +506,14 @@ void prepare_zeldovich(void) {
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
-	delta[(i * Nmesh + j) * (Nmesh) + k].re = 0;
-	delta[(i * Nmesh + j) * (Nmesh) + k].im = 0;
+	deltadot[(i * Nmesh + j) * (Nmesh) + k].re = 0;
+	deltadot[(i * Nmesh + j) * (Nmesh) + k].im = 0;
       }
-    printf("debug: Line %d\n",__LINE__);
+   printf("debug: Line %d\n",__LINE__);
 
   
   fftwnd_mpi(plan1, 1, delta, work1, FFTW_NORMAL_ORDER);		/** FFT **/
-    printf("debug: Line %d\n",__LINE__);
+  printf("debug: Line %d\n",__LINE__);
 
   fftwnd_mpi(plan2, 1, deltadot, work2, FFTW_NORMAL_ORDER);		/** FFT **/
   printf("debug: Line %d\n",__LINE__);
