@@ -57,6 +57,7 @@ rfftwnd_mpi_plan Inverse_plan, Inverse_plan2;
 fftw_real *Disp, *Velq, *Workspace, *Workspace2;
 fftw_complex *Cdata, *Cdata2;
 fftw_complex *delta_complx, *deltadot_complx;
+fftw_complex     *DeltaDotField, *VelPrefac;
 
 double UnitTime_in_s, UnitLength_in_cm, UnitMass_in_g, UnitVelocity_in_cm_per_s;
 double InputSpectrum_UnitLength_in_cm;

@@ -473,11 +473,11 @@ void set_units(void)		/* ... set some units */
 
 void prepare_zeldovich(void) {
   int i,j,k,index;
-  fftw_complex *delta, *deltadot, *velfac, *work;
+  fftw_complex *DeltaField, *work;
   fftwnd_mpi_plan plan;
   double inv;
   int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
-  printf("debug: Line %d\n",__LINE__);
+ 
 
   plan = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
 				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
@@ -485,25 +485,25 @@ void prepare_zeldovich(void) {
   fftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
   
-  printf("debug: Line %d\n",__LINE__);
+ 
   work = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
-  delta = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
+  DeltaField = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
 
-  printf("debug: Line %d\n",__LINE__);
+ 
   
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
-	delta[(i * Nmesh + j) * (Nmesh) + k].re = 1;
-	delta[(i * Nmesh + j) * (Nmesh) + k].im = 1;
+	DeltaField[(i * Nmesh + j) * (Nmesh) + k].re = 1;
+	DeltaField[(i * Nmesh + j) * (Nmesh) + k].im = 1;
       }
 
-  printf("debug: Line %d\n",__LINE__);
+ 
   fftwnd_mpi(plan, 1, delta, work, FFTW_NORMAL_ORDER);		/** FFT **/
-  printf("debug: Line %d\n",__LINE__);
+ 
   free(work);
   fftwnd_mpi_destroy_plan(plan);
-  printf("debug: Line %d\n",__LINE__);
+ 
 
 
   plan = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
@@ -512,35 +512,32 @@ void prepare_zeldovich(void) {
   fftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
   
-  printf("debug: Line %d\n",__LINE__);
+ 
   work = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
-  deltadot = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
+  DeltaDotField = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
 
-  printf("debug: Line %d\n",__LINE__);
+ 
   
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
-	deltadot[(i * Nmesh + j) * (Nmesh) + k].re = 1;
-	deltadot[(i * Nmesh + j) * (Nmesh) + k].im = 1;
+	DeltaDotField[(i * Nmesh + j) * (Nmesh) + k].re = 1;
+	DeltaDotField[(i * Nmesh + j) * (Nmesh) + k].im = 1;
       }
 
-  printf("debug: Line %d\n",__LINE__);
   fftwnd_mpi(plan, 1, deltadot, work, FFTW_NORMAL_ORDER);		/** FFT **/
-  printf("debug: Line %d\n",__LINE__);
   free(work);
   fftwnd_mpi_destroy_plan(plan);
-  printf("debug: Line %d\n",__LINE__);
 
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
 	index = (i * Nmesh + j) * (Nmesh) + k;
-	inv = 1./(delta[index].re*delta[index].re + delta[index].im*delta[index].im);
-	velfac[index].re = (deltadot[index].re*delta[index].re + deltadot[index].im*delta[index].im)*inv;
-	velfac[index].im = (deltadot[index].im*delta[index].re + deltadot[index].re*delta[index].im)*inv;
+	inv = 1./(DeltaField[index].re*DeltaField[index].re + DeltaField[index].im*DeltaField[index].im);
+	VelPrefac[index].re = (DeltaDotField[index].re*DeltaField[index].re + DeltaDotField[index].im*DeltaField[index].im)*inv;
+	VelPrefac[index].im = (DeltaDotField[index].im*DeltaField[index].re + DeltaDotField[index].re*DeltaField[index].im)*inv;
       }
-  free(deltadot);
+  free(DeltaDotField);
 }
 
 void initialize_ffts(void)
@@ -616,6 +613,8 @@ void initialize_ffts(void)
 
 void free_ffts(void)
 {
+  free(DeltaField);
+  free(VelPrefac);
   free(Workspace);
   free(Disp);
   free(Workspace2);
