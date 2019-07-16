@@ -515,7 +515,7 @@ void prepare_zeldovich(void) {
   tmp3 = (fftw_real *) malloc(total_size * sizeof(fftw_real));
   
   fp = fopen(FileWithDelta, "rb");
-  fseek(fp, (lx_start*Nmesh*Nmesh-1)*sizeof(double), SEEK_SET);
+  fseek(fp, (lx_start*Nmesh*Nmesh)*sizeof(double), SEEK_SET);
   fread(tmp1, total_size, sizeof(double), fp);
   fclose(fp);
   rfftwnd_mpi(plan, 1, tmp1, work, FFTW_NORMAL_ORDER);		/** FFT **/
@@ -538,7 +538,7 @@ void prepare_zeldovich(void) {
  
   fp = fopen(FileWithDeltaDot, "rb");
   printf("Rank %d x_start %d\n",ThisTask, lx_start);
-  fseek(fp, (lx_start*Nmesh*Nmesh-1)*sizeof(double), SEEK_SET);
+  fseek(fp, (lx_start*Nmesh*Nmesh)*sizeof(double), SEEK_SET);
   fread(tmp2, total_size, sizeof(double), fp);
   fclose(fp);
 
