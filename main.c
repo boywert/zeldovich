@@ -497,7 +497,7 @@ void prepare_zeldovich(void) {
       for(k = 0; k < Nmesh; k++) {
 	printf("%d %d %d -> %d / %d\n",i,j,k, (i * Nmesh + j) * (Nmesh) + k, total_size);
 	//delta[(i * Nmesh + j) * (Nmesh) + k].re = 0;
-	ddelta[(i * Nmesh + j) * (Nmesh) + k].im = 0;
+	ddelta[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
       }
  
 
