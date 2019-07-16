@@ -440,7 +440,7 @@ void displacement_fields(void)
   	}
     }
 
-  gsl_rng_free(random_generator);
+ 
 
   MPI_Reduce(&maxdisp, &max_disp_glob, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
@@ -475,7 +475,7 @@ void prepare_zeldovich(void) {
   int i,j,k,index;
   fftw_complex *delta, *deltadot, *velfac, *work;
   fftwnd_mpi_plan plan;
-  real inv;
+  double inv;
   int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
   printf("debug: Line %d\n",__LINE__);
 
