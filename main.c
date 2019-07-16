@@ -499,7 +499,7 @@ void prepare_zeldovich(void) {
       }
 
  
-  fftwnd_mpi(plan, 1, delta, work, FFTW_NORMAL_ORDER);		/** FFT **/
+  fftwnd_mpi(plan, 1, DeltaField, work, FFTW_NORMAL_ORDER);		/** FFT **/
  
   free(work);
   fftwnd_mpi_destroy_plan(plan);
@@ -525,7 +525,7 @@ void prepare_zeldovich(void) {
 	DeltaDotField[(i * Nmesh + j) * (Nmesh) + k].im = 1;
       }
 
-  fftwnd_mpi(plan, 1, deltadot, work, FFTW_NORMAL_ORDER);		/** FFT **/
+  fftwnd_mpi(plan, 1, DeltaDotField, work, FFTW_NORMAL_ORDER);		/** FFT **/
   free(work);
   fftwnd_mpi_destroy_plan(plan);
 
