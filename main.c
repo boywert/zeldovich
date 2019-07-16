@@ -203,7 +203,7 @@ void displacement_fields(void)
 			      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
 			      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
 			      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
-			      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+			      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
 			      
 			      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
 				-kvec[axes] / kmag2 * delta.im;
