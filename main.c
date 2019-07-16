@@ -473,7 +473,7 @@ void set_units(void)		/* ... set some units */
 
 void prepare_zeldovich(void) {
   int i,j,k,index;
-  fftw_complex *DeltaField, *work;
+  fftw_complex *DeltaDotField, *work;
   fftwnd_mpi_plan plan;
   double inv;
   int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
