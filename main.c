@@ -133,6 +133,7 @@ void displacement_fields(void)
 		{
 		  for(k = 0; k < Nmesh / 2; k++)
 		    {
+		      printf("%d %d %d\n",i,j,k);
 		      if(i == Nmesh / 2 || j == Nmesh / 2 || k == Nmesh / 2)
 			continue;
 		      if(i == 0 && j == 0 && k == 0)
