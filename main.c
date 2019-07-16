@@ -293,11 +293,11 @@ void displacement_fields(void)
 
 				  if(ii >= Local_x_start && ii < (Local_x_start + Local_nx))
 				    {
-				      printf("rank %d t5 index = %d\n",ThisTask, ((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k);
-				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
-				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
-				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
-				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
+				      printf("rank %d t5 index = %d\n",ThisTask, ((ii - Local_x_start) * Nmesh + jj) * (Nmesh) + k);
+				      delta.re =  smth*DeltaField[((ii - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
+				      delta.im =  smth*DeltaField[((ii - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
+				      vel_prefac.re =  VelPrefac[((ii - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
+				      vel_prefac.im =  VelPrefac[((ii - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
 
 				      
 				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
