@@ -502,8 +502,8 @@ void prepare_zeldovich(int total_size) {
 
   free(work1);
   free(work2);
-  free(data);
-  free(datadot);
+  free(delta);
+  free(deltadot);
   fftwnd_mpi_destroy_plan(plan1);
   fftwnd_mpi_destroy_plan(plan2);
 }
