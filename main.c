@@ -68,7 +68,6 @@ void displacement_fields(void)
 {
   MPI_Request request;
   MPI_Status status;
-  gsl_rng *random_generator;
   int i, j, k, ii, jj, kk, axes;
   int n;
   int sendTask, recvTask;
@@ -77,7 +76,6 @@ void displacement_fields(void)
   double u, v, w;
   double f1, f2, f3, f4, f5, f6, f7, f8;
   double dis, vel, maxdisp, max_disp_glob;
-  unsigned int *seedtable;
   double  hubble_a;
   fftw_complex delta;
 #ifdef CORRECT_CIC
@@ -474,9 +472,10 @@ void set_units(void)		/* ... set some units */
 }
 
 void prepare_zeldovich(void) {
-  int i,j,k;
-  fftw_complex *delta, *deltadot, *work;
+  int i,j,k,index;
+  fftw_complex *delta, *deltadot, *velfac, *work;
   fftwnd_mpi_plan plan;
+  real inv;
   int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
   printf("debug: Line %d\n",__LINE__);
 
@@ -495,15 +494,14 @@ void prepare_zeldovich(void) {
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
-	delta[(i * Nmesh + j) * (Nmesh) + k].re = 0;
-	delta[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
+	delta[(i * Nmesh + j) * (Nmesh) + k].re = 1;
+	delta[(i * Nmesh + j) * (Nmesh) + k].im = 1;
       }
 
   printf("debug: Line %d\n",__LINE__);
   fftwnd_mpi(plan, 1, delta, work, FFTW_NORMAL_ORDER);		/** FFT **/
   printf("debug: Line %d\n",__LINE__);
   free(work);
-  //free(delta);
   fftwnd_mpi_destroy_plan(plan);
   printf("debug: Line %d\n",__LINE__);
 
@@ -523,18 +521,26 @@ void prepare_zeldovich(void) {
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
-	deltadot[(i * Nmesh + j) * (Nmesh) + k].re = 0;
-	deltadot[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
+	deltadot[(i * Nmesh + j) * (Nmesh) + k].re = 1;
+	deltadot[(i * Nmesh + j) * (Nmesh) + k].im = 1;
       }
 
   printf("debug: Line %d\n",__LINE__);
   fftwnd_mpi(plan, 1, deltadot, work, FFTW_NORMAL_ORDER);		/** FFT **/
   printf("debug: Line %d\n",__LINE__);
   free(work);
-  //free(deltadot);
   fftwnd_mpi_destroy_plan(plan);
   printf("debug: Line %d\n",__LINE__);
 
+  for(i = 0; i < lnx; i++)
+    for(j = 0; j < Nmesh; j++)
+      for(k = 0; k < Nmesh; k++) {
+	index = (i * Nmesh + j) * (Nmesh) + k;
+	inv = 1./(delta[index].re*delta[index].re + delta[index].im*delta[index].im);
+	velfac[index].re = (deltadot[index].re*delta[index].re + deltadot[index].im*delta[index].im)*inv;
+	velfac[index].im = (deltadot[index].im*delta[index].re + deltadot[index].re*delta[index].im)*inv;
+      }
+  free(deltadot);
 }
 
 void initialize_ffts(void)
