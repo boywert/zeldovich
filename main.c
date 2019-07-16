@@ -501,7 +501,7 @@ void prepare_zeldovich(void) {
  
 
   
-  fftwnd_mpi(plan, 1, delta, work1, FFTW_NORMAL_ORDER);		/** FFT **/
+  fftwnd_mpi(plan, 1, delta, work, FFTW_NORMAL_ORDER);		/** FFT **/
   printf("debug: Line %d\n",__LINE__);
 
 
