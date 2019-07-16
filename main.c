@@ -497,7 +497,7 @@ void prepare_zeldovich(void) {
   int i,j,k,index;
   fftw_real *work;
   rfftwnd_mpi_plan plan;
-  double inv;
+  double inv,Ninv;
   int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
   FILE *fp;
   double *read_tmp;
@@ -520,10 +520,11 @@ void prepare_zeldovich(void) {
   fseek(fp, (lx_start*Nmesh*Nmesh)*sizeof(double), SEEK_SET);
   fread(read_tmp, lnx * Nmesh * Nmesh, sizeof(double), fp);
   fclose(fp);
+  Ninv = 1.(Nmesh*Nmesh*Nmesh);
   for (i = 0; i < lnx; ++i)
     for (j = 0; j < Nmesh; ++j)
       for (k = 0; k < Nmesh; ++k)
-	tmp1[(i*Nmesh + j) * (2*(Nmesh/2+1)) + k] = read_tmp[((i)*Nmesh + j) * Nmesh + k];
+	tmp1[(i*Nmesh + j) * (2*(Nmesh/2+1)) + k] = Ninv*read_tmp[((i)*Nmesh + j) * Nmesh + k];
 
 	     
   rfftwnd_mpi(plan, 1, tmp1, work, FFTW_NORMAL_ORDER);		/** FFT **/
@@ -555,7 +556,7 @@ void prepare_zeldovich(void) {
   for (i = 0; i < lnx; ++i)
     for (j = 0; j < Nmesh; ++j)
       for (k = 0; k < Nmesh; ++k)
-	tmp2[(i*Nmesh + j) * (2*(Nmesh/2+1)) + k] = read_tmp[((i)*Nmesh + j) * Nmesh + k];
+	tmp2[(i*Nmesh + j) * (2*(Nmesh/2+1)) + k] = Ninv*read_tmp[((i)*Nmesh + j) * Nmesh + k];
 
   rfftwnd_mpi(plan, 1, tmp2, work, FFTW_NORMAL_ORDER);		/** FFT **/
   DeltaDotField = (fftw_complex *) tmp2;
