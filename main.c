@@ -484,7 +484,7 @@ void prepare_zeldovich(void) {
 				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
   plan2 = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
 				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
-    printf("debug: Line %d\n",__LINE__);
+  printf("debug: Line %d\n",__LINE__);
 
   fftwnd_mpi_local_sizes(plan1, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
