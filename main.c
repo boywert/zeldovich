@@ -520,7 +520,7 @@ void prepare_zeldovich(void) {
   fseek(fp, (lx_start*Nmesh*Nmesh)*sizeof(double), SEEK_SET);
   fread(read_tmp, lnx * Nmesh * Nmesh, sizeof(double), fp);
   fclose(fp);
-  Ninv = 1.(Nmesh*Nmesh*Nmesh);
+  Ninv = 1./(Nmesh*Nmesh*Nmesh);
   for (i = 0; i < lnx; ++i)
     for (j = 0; j < Nmesh; ++j)
       for (k = 0; k < Nmesh; ++k)
