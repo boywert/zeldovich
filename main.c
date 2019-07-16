@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <drfftw_mpi.h>
+#include <dfftw_mpi.h>
 #include <mpi.h>
 #include <gsl/gsl_rng.h>
 
@@ -102,41 +103,7 @@ void displacement_fields(void)
   fac = pow(2 * PI / Box, 1.5);
   
   maxdisp = 0;
-
-  random_generator = gsl_rng_alloc(gsl_rng_ranlxd1);
-
-  gsl_rng_set(random_generator, Seed);
-
-  if(!(seedtable = malloc(Nmesh * Nmesh * sizeof(unsigned int))))
-    FatalError(4);
-
-  for(i = 0; i < Nmesh / 2; i++)
-    {
-      for(j = 0; j < i; j++)
-	seedtable[i * Nmesh + j] = 0x7fffffff * gsl_rng_uniform(random_generator);
-
-      for(j = 0; j < i + 1; j++)
-	seedtable[j * Nmesh + i] = 0x7fffffff * gsl_rng_uniform(random_generator);
-
-      for(j = 0; j < i; j++)
-	seedtable[(Nmesh - 1 - i) * Nmesh + j] = 0x7fffffff * gsl_rng_uniform(random_generator);
-
-      for(j = 0; j < i + 1; j++)
-	seedtable[(Nmesh - 1 - j) * Nmesh + i] = 0x7fffffff * gsl_rng_uniform(random_generator);
-
-      for(j = 0; j < i; j++)
-	seedtable[i * Nmesh + (Nmesh - 1 - j)] = 0x7fffffff * gsl_rng_uniform(random_generator);
-
-      for(j = 0; j < i + 1; j++)
-	seedtable[j * Nmesh + (Nmesh - 1 - i)] = 0x7fffffff * gsl_rng_uniform(random_generator);
-
-      for(j = 0; j < i; j++)
-	seedtable[(Nmesh - 1 - i) * Nmesh + (Nmesh - 1 - j)] = 0x7fffffff * gsl_rng_uniform(random_generator);
-
-      for(j = 0; j < i + 1; j++)
-	seedtable[(Nmesh - 1 - j) * Nmesh + (Nmesh - 1 - i)] = 0x7fffffff * gsl_rng_uniform(random_generator);
-    }
-
+  
   for(axes = 0; axes < 3; axes++)
     {
       if(ThisTask == 0)
@@ -166,15 +133,8 @@ void displacement_fields(void)
 	    {
 	      for(j = 0; j < Nmesh; j++)
 		{
-		  gsl_rng_set(random_generator, seedtable[i * Nmesh + j]);
-
 		  for(k = 0; k < Nmesh / 2; k++)
 		    {
-		      phase = gsl_rng_uniform(random_generator) * 2 * PI;
-		      do
-			ampl = gsl_rng_uniform(random_generator);
-		      while(ampl == 0);
-
 		      if(i == Nmesh / 2 || j == Nmesh / 2 || k == Nmesh / 2)
 			continue;
 		      if(i == 0 && j == 0 && k == 0)
@@ -213,12 +173,7 @@ void displacement_fields(void)
 			    continue;
 			}
 
-		      p_of_k = PowerSpec(kmag);
-
-		      p_of_k *= -log(ampl);
-
 		      delta = fac * sqrt(p_of_k) / Dplus;
-		      deltadot = delta;
 
 #ifdef CORRECT_CIC
 		      /* do deconvolution of CIC interpolation */
@@ -241,7 +196,8 @@ void displacement_fields(void)
 		      ff = 1 / (fx * fy * fz);
 		      smth = ff * ff;
 
-		      delta *= smth;
+		      delta.re *= smth;
+		      delta.im *= smth;
 		      /* end deconvolution */
 #endif
 		      if(k > 0)
@@ -249,9 +205,9 @@ void displacement_fields(void)
 			  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 			    {
 			      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
-				-kvec[axes] / kmag2 * delta * sin(phase);
+				-kvec[axes] / kmag2 * delta.im;
 			      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
-				kvec[axes] / kmag2 * delta * cos(phase);
+				kvec[axes] / kmag2 * delta.re;
 			      
 			      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
 				-kvec[axes] / kmag2 * delta * sin(phase) * DEBA18_prefac(kmag, InitTime);
@@ -272,14 +228,14 @@ void displacement_fields(void)
 				      jj = Nmesh - j;	/* note: j!=0 surely holds at this point */
 
 				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * delta * sin(phase);
+					-kvec[axes] / kmag2 * delta.im;
 				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * delta * cos(phase);
+					kvec[axes] / kmag2 * delta.re;
 
 				      Cdata[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * delta * sin(phase);
+					-kvec[axes] / kmag2 * delta.im;
 				      Cdata[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					-kvec[axes] / kmag2 * delta * cos(phase);
+					-kvec[axes] / kmag2 * delta.re;
 
 
 				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
@@ -310,9 +266,9 @@ void displacement_fields(void)
 				  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 				    {
 				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * delta * sin(phase);
+					-kvec[axes] / kmag2 * delta.im;
 				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * delta * cos(phase);
+					kvec[axes] / kmag2 * delta.re;
 
 				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * delta * sin(phase) * DEBA18_prefac(kmag, InitTime);
@@ -323,9 +279,9 @@ void displacement_fields(void)
 				  if(ii >= Local_x_start && ii < (Local_x_start + Local_nx))
 				    {
 				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
-					    k].re = -kvec[axes] / kmag2 * delta * sin(phase);
+					    k].re = -kvec[axes] / kmag2 * delta.im;
 				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
-					    k].im = -kvec[axes] / kmag2 * delta * cos(phase);
+					    k].im = -kvec[axes] / kmag2 * delta.re;
 				      
 				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
 					     k].re = -kvec[axes] / kmag2 * delta * sin(phase) * DEBA18_prefac(kmag, InitTime);
@@ -516,7 +472,41 @@ void set_units(void)		/* ... set some units */
   Hubble = HUBBLE * UnitTime_in_s;
 }
 
+void prepare_zeldovich(int total_size) {
+  int i,j,k;
+  fftw_complex *delta, *deltadot, *work1, *work2;
+  fftwnd_mpi_plan plan1, plan2; 
+  work1 = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
+  work2 = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
+  delta = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
+  deltadot = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
+  for(i = 0; i < Local_nx; i++)
+    for(j = 0; j < Nmesh; j++)
+      for(k = 0; k < Nmesh; k++) {
+	delta[(i * Nmesh + j) * (Nmesh) + k].re = 0;
+	delta[(i * Nmesh + j) * (Nmesh) + k].im = 0;
+      }
+  for(i = 0; i < Local_nx; i++)
+    for(j = 0; j < Nmesh; j++)
+      for(k = 0; k < Nmesh; k++) {
+	deltadot[(i * Nmesh + j) * (Nmesh) + k].re = 0;
+	deltadot[(i * Nmesh + j) * (Nmesh) + k].im = 0;
+      }
+  
+  plan1 = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
+				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
+  plan2 = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
+				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
+  fftwnd_mpi(plan1, 1, delta, work1, FFTW_NORMAL_ORDER);		/** FFT **/
+  fftwnd_mpi(plan2, 1, deltadot, work2, FFTW_NORMAL_ORDER);		/** FFT **/
 
+  free(work1);
+  free(work2);
+  free(data);
+  free(datadot);
+  fftwnd_mpi_destroy_plan(plan1);
+  fftwnd_mpi_destroy_plan(plan2);
+}
 
 void initialize_ffts(void)
 {
@@ -547,6 +537,7 @@ void initialize_ffts(void)
       fflush(stdout);
     }
 
+  prepare_zeldovich(total_size);
 
   Slab_to_task = malloc(sizeof(int) * Nmesh);
   slab_to_task_local = malloc(sizeof(int) * Nmesh);
