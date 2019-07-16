@@ -495,19 +495,45 @@ void prepare_zeldovich(void) {
   for(i = 0; i < lnx; i++)
     for(j = 0; j < Nmesh; j++)
       for(k = 0; k < Nmesh; k++) {
-	printf("%d %d %d -> %d / %d\n",i,j,k, (i * Nmesh + j) * (Nmesh) + k, total_size);
-	//delta[(i * Nmesh + j) * (Nmesh) + k].re = 0;
+	delta[(i * Nmesh + j) * (Nmesh) + k].re = 0;
 	delta[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
       }
- 
 
-  /* printf("debug: Line %d\n",__LINE__); */
-  /* fftwnd_mpi(plan, 1, delta, work, FFTW_NORMAL_ORDER);		/\** FFT **\/ */
-  /* printf("debug: Line %d\n",__LINE__); */
-  /* free(work); */
-  /* free(delta); */
-  /* fftwnd_mpi_destroy_plan(plan); */
-  /* printf("debug: Line %d\n",__LINE__); */
+  printf("debug: Line %d\n",__LINE__);
+  fftwnd_mpi(plan, 1, delta, work, FFTW_NORMAL_ORDER);		/** FFT **/
+  printf("debug: Line %d\n",__LINE__);
+  free(work);
+  //free(delta);
+  fftwnd_mpi_destroy_plan(plan);
+  printf("debug: Line %d\n",__LINE__);
+
+
+  plan = fftw3d_mpi_create_plan(MPI_COMM_WORLD,
+				 Nmesh, Nmesh, Nmesh, FFTW_FORWARD, FFTW_ESTIMATE);
+
+  fftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
+			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
+  
+  printf("debug: Line %d\n",__LINE__);
+  work = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
+  deltadot = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
+
+  printf("debug: Line %d\n",__LINE__);
+  
+  for(i = 0; i < lnx; i++)
+    for(j = 0; j < Nmesh; j++)
+      for(k = 0; k < Nmesh; k++) {
+	deltadot[(i * Nmesh + j) * (Nmesh) + k].re = 0;
+	deltadot[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
+      }
+
+  printf("debug: Line %d\n",__LINE__);
+  fftwnd_mpi(plan, 1, deltadot, work, FFTW_NORMAL_ORDER);		/** FFT **/
+  printf("debug: Line %d\n",__LINE__);
+  free(work);
+  //free(deltadot);
+  fftwnd_mpi_destroy_plan(plan);
+  printf("debug: Line %d\n",__LINE__);
 
 }
 
