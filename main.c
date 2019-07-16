@@ -199,8 +199,8 @@ void displacement_fields(void)
 			{
 			  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 			    {
-			      delta.re =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
-			      delta.im =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+			      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
+			      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
 			      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
 			      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
 			      
@@ -227,8 +227,8 @@ void displacement_fields(void)
 				    {
 				      jj = Nmesh - j;	/* note: j!=0 surely holds at this point */
 				      
-				      delta.re =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
-				      delta.im =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
+				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
 				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
 				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
 				      
@@ -241,8 +241,8 @@ void displacement_fields(void)
 				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
 					kvec[axes] / kmag2 *  (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 
-				      delta.re =  DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
-				      delta.im =  DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
+				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
+				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
 				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
 				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
 				      
@@ -272,8 +272,8 @@ void displacement_fields(void)
 
 				  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 				    {
-     				      delta.re =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
-				      delta.im =  DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
+     				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
+				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
 				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].re;
 				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh) + k].im;
 				      
@@ -291,8 +291,8 @@ void displacement_fields(void)
 				  if(ii >= Local_x_start && ii < (Local_x_start + Local_nx))
 				    {
 
-				      delta.re =  DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
-				      delta.im =  DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
+				      delta.re =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
+				      delta.im =  smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
 				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].re;
 				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
 
