@@ -538,7 +538,7 @@ void prepare_zeldovich(void) {
 
  
   fp = fopen(FileWithDeltaDot, "rb");
-  printf("Rank %d x_start %d\n",ThisTask, lx_start);
+  printf("Rank %d x_start %d: %d %d\n",ThisTask, lx_start, (int)sizeof(fftw_real), (int)sizeof(double));
   fseek(fp, (lx_start*Nmesh*Nmesh)*sizeof(double), SEEK_SET);
   fread(tmp2, total_size, sizeof(double), fp);
   fclose(fp);
