@@ -80,6 +80,7 @@ void displacement_fields(void)
   double dis, vel, maxdisp, max_disp_glob;
   unsigned int *seedtable;
   double  hubble_a;
+  fftw_complex delta;
 #ifdef CORRECT_CIC
   double fx, fy, fz, ff, smth;
 #endif
@@ -91,7 +92,8 @@ void displacement_fields(void)
     }
 
   vel_prefac = DEBA18_prefac(2*PI/Box, InitTime);
-
+  delta.im = 0.0;
+  delta.re = 0.0;
   hubble_a =
     Hubble * sqrt(Omega / pow(InitTime, 3) + OmegaRadiation/ pow(InitTime, 4) +
 		  (1 - Omega - OmegaLambda ) / pow(InitTime, 2) + OmegaLambda);  
@@ -173,7 +175,7 @@ void displacement_fields(void)
 			    continue;
 			}
 
-		      delta = fac * sqrt(p_of_k) / Dplus;
+		      //delta = fac * sqrt(p_of_k) / Dplus;
 
 #ifdef CORRECT_CIC
 		      /* do deconvolution of CIC interpolation */
