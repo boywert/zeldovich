@@ -509,7 +509,6 @@ void prepare_zeldovich(void) {
   rfftwnd_mpi_local_sizes(plan, &lnx, &lx_start,
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
   
-  printf("Task: %d totalsize = %d, nx = %d, x_start = %d\n",ThisTask,total_size,lnx,lx_start);
   work = (fftw_real *) malloc(total_size * sizeof(fftw_real));
   tmp1 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
   tmp2 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
@@ -572,13 +571,10 @@ void prepare_zeldovich(void) {
 	inv = 1./(DeltaField[index].re*DeltaField[index].re + DeltaField[index].im*DeltaField[index].im);
 	VelPrefac[index].re = (DeltaDotField[index].re*DeltaField[index].re + DeltaDotField[index].im*DeltaField[index].im)*inv;
 	VelPrefac[index].im = (DeltaDotField[index].im*DeltaField[index].re + DeltaDotField[index].re*DeltaField[index].im)*inv;
-	if(1000 == (((i+lx_start) * Nmesh + j) * (Nmesh/2+1) + k) )
-	  printf("1000: %g %g\n",VelPrefac[index].re,VelPrefac[index].im);
       }
   
   if(!ThisTask)
-    printf("Finished working on DeltaField and VelPrefac\n");
-  MPI_Barrier(MPI_COMM_WORLD);
+    printf("Finished working on DeltaField and VelPrefac\n"); 
 }
 
 void initialize_ffts(void)
