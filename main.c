@@ -297,15 +297,15 @@ void displacement_fields(void)
 				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh) + k].im;
 
 				      
-				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
-					    k].re = -kvec[axes] / kmag2 * delta.im;
-				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
-					    k].im = -kvec[axes] / kmag2 * delta.re;
+				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
+					-kvec[axes] / kmag2 * delta.im;
+				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
+					kvec[axes] / kmag2 * delta.re;
 				      
-				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
-					     k].re = -kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
-				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) +
-					    k].im = -kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
+				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
+					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
+				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
+					kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 				    }
 				}
 			    }
