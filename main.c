@@ -475,7 +475,7 @@ void set_units(void)		/* ... set some units */
 
 void prepare_zeldovich(void) {
   int i,j,k;
-  fftw_complex *ddelta, *deltadot, *work;
+  fftw_complex *delta, *deltadot, *work;
   fftwnd_mpi_plan plan;
   int lnx, lx_start, lny_after_transpose, ly_start_after_transpose, total_size;
   printf("debug: Line %d\n",__LINE__);
@@ -487,8 +487,8 @@ void prepare_zeldovich(void) {
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
   
   printf("debug: Line %d\n",__LINE__);
-  work = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
-  ddelta = (fftw_complex *) malloc(total_size * sizeof(fftw_complex *));
+  work = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
+  delta = (fftw_complex *) malloc(total_size * sizeof(fftw_complex));
 
   printf("debug: Line %d\n",__LINE__);
   
@@ -497,7 +497,7 @@ void prepare_zeldovich(void) {
       for(k = 0; k < Nmesh; k++) {
 	printf("%d %d %d -> %d / %d\n",i,j,k, (i * Nmesh + j) * (Nmesh) + k, total_size);
 	//delta[(i * Nmesh + j) * (Nmesh) + k].re = 0;
-	ddelta[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
+	delta[(i * Nmesh + j) * (Nmesh) + k].im = 0.0;
       }
  
 
