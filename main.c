@@ -514,9 +514,10 @@ void prepare_zeldovich(void) {
   tmp1 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
   tmp2 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
   tmp3 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
-  read_tmp = (double *) malloc( (lnx*Nmesh*Nmesh) * sizeof(double));
+  
   
   fp = fopen(FileWithDelta, "rb");
+  read_tmp = (double *) malloc( (lnx*Nmesh*Nmesh) * sizeof(double));
   fseek(fp, (lx_start*Nmesh*Nmesh)*sizeof(double), SEEK_SET);
   fread(read_tmp, lnx * Nmesh * Nmesh, sizeof(double), fp);
   fclose(fp);
@@ -548,6 +549,7 @@ void prepare_zeldovich(void) {
 
  
   fp = fopen(FileWithDeltaDot, "rb");
+  read_tmp = (double *) malloc( (lnx*Nmesh*Nmesh) * sizeof(double));
   fseek(fp, (lx_start*Nmesh*Nmesh)*sizeof(double), SEEK_SET);
   fread(read_tmp, lnx * Nmesh * Nmesh, sizeof(double), fp);
   fclose(fp);
@@ -559,6 +561,7 @@ void prepare_zeldovich(void) {
   rfftwnd_mpi(plan, 1, tmp2, work, FFTW_NORMAL_ORDER);		/** FFT **/
   DeltaDotField = (fftw_complex *) tmp2;
   free(work);
+  free(read_tmp);
   rfftwnd_mpi_destroy_plan(plan);
   
   VelPrefac = (fftw_complex *) tmp3;
