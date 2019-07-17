@@ -510,9 +510,9 @@ void prepare_zeldovich(void) {
 			 &lny_after_transpose, &ly_start_after_transpose, &total_size);
   
   work = (fftw_real *) malloc(total_size * sizeof(fftw_real));
-  tmp1 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
-  tmp2 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
-  tmp3 = (fftw_real *) malloc((total_size+additional) * sizeof(fftw_real));
+  tmp1 = (fftw_real *) malloc((total_size) * sizeof(fftw_real));
+  tmp2 = (fftw_real *) malloc((total_size) * sizeof(fftw_real));
+  tmp3 = (fftw_real *) malloc((total_size) * sizeof(fftw_real));
   
   
   fp = fopen(FileWithDelta, "rb");
