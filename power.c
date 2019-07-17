@@ -135,38 +135,13 @@ void initialize_powerspectrum(void)
   OmegaRadiation = Omega/(2 + Z_eq);
   OmegaLambda = 1.0 - Omega - OmegaRadiation - 1e-30;
 
-  AA = 6.4 / ShapeGamma * (3.085678e24 / UnitLength_in_cm);
-  BB = 3.0 / ShapeGamma * (3.085678e24 / UnitLength_in_cm);
-  CC = 1.7 / ShapeGamma * (3.085678e24 / UnitLength_in_cm);
-  nu = 1.13;
 
   R8 = 8 * (3.085678e24 / UnitLength_in_cm);	/* 8 Mpc/h */
 
-
-  if(WhichSpectrum == 2)
-    read_power_table();
-
-  if(ReNormalizeInputSpectrum == 0 && WhichSpectrum == 2)
-    {
-      Norm = 1.0;
+  Norm = 1.0;
       /* tabulated file is already at the initial redshift */
-      Dplus = 1.0;
-    }
-  else
-    {
-      Norm = 1.0;
-      res = TopHatSigma2(R8);
-
-      if(ThisTask == 0 && WhichSpectrum == 2)
-	printf("\nNormalization of spectrum in file:  Sigma8 = %g\n", sqrt(res));
-
-      Norm = Sigma8 * Sigma8 / res;
-
-      if(ThisTask == 0 && WhichSpectrum == 2)
-	printf("Normalization adjusted to  Sigma8=%g   (Normfac=%g)\n\n", Sigma8, Norm);
-
-      Dplus = GrowthFactor(InitTime, 1.0);
-    }
+  Dplus = 1.0;
+  
 }
 
 double PowerSpec_Tabulated(double k)

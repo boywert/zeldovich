@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 
   set_units();
 
-  //initialize_powerspectrum();
+  initialize_powerspectrum();
 
   initialize_ffts();
 
