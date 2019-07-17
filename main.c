@@ -97,7 +97,7 @@ void displacement_fields(void)
     printf("InitTime = %g\n", InitTime);
 
   
-  fac = 1; //pow(1./(2 * PI) , 1.5);
+  fac = 0.00462453873; //pow(1./(2 * PI) , 1.5);
   printf("fac = %g Box = %g\n", fac, Box);
   maxdisp = 0;
   
