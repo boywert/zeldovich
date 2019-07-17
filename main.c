@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     }
 
   MPI_Barrier(MPI_COMM_WORLD);
-  print_spec();
+  //print_spec();
 
   MPI_Finalize();		/* clean up & finalize MPI */
   exit(0);
