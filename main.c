@@ -263,11 +263,11 @@ void displacement_fields(void)
 				      Cdata[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * delta.im;
 				      Cdata[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * delta.re;
+					-kvec[axes] / kmag2 * delta.re;
 				      Cdata2[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
 				      Cdata2[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
+					-kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 				    }
 				}
 			    }
@@ -321,12 +321,12 @@ void displacement_fields(void)
 				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * delta.im;
 				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * delta.re;
+					-kvec[axes] / kmag2 * delta.re;
 				      
 				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
 					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
 				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
+					-kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 				    }
 				}
 			    }
@@ -593,8 +593,6 @@ void prepare_zeldovich(void) {
 	VelPrefac[index].re = (DeltaDotField[index].re*DeltaField[index].re + DeltaDotField[index].im*DeltaField[index].im)*inv;
 	VelPrefac[index].im = (DeltaDotField[index].im*DeltaField[index].re + DeltaDotField[index].re*DeltaField[index].im)*inv;
       }
-
-
   
   if(!ThisTask)
     printf("Finished working on DeltaField and VelPrefac\n"); 
