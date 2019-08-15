@@ -196,7 +196,9 @@ void displacement_fields(void)
 		      /* end deconvolution */
 #endif
 
+#ifdef full
 		      if(k > 0)
+#endif
 			{
 			  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 			    {
@@ -221,6 +223,7 @@ void displacement_fields(void)
 				kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 			    }
 			}
+#ifdef full
 		      else	/* k=0 plane needs special treatment */
 			{
 			  if(i == 0)
@@ -331,6 +334,7 @@ void displacement_fields(void)
 				}
 			    }
 			}
+#endif
 		    }
 		}
 	    }
