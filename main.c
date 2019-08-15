@@ -196,9 +196,6 @@ void displacement_fields(void)
 		      /* end deconvolution */
 #endif
 
-#ifdef full
-		      if(k > 0)
-#endif
 			{
 			  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
 			    {
@@ -223,118 +220,6 @@ void displacement_fields(void)
 				kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 			    }
 			}
-#ifdef full
-		      else	/* k=0 plane needs special treatment */
-			{
-			  if(i == 0)
-			    {
-			      if(j >= Nmesh / 2)
-				continue;
-			      else
-				{
-				  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
-				    {
-				      jj = Nmesh - j;	/* note: j!=0 surely holds at this point */
-
-				      delta.re =  fac*smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
-				      delta.im =  fac*smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
-#ifdef MODELVEL
-				      vel_prefac.re = DEBA18_prefac(kmag, InitTime);
-				      vel_prefac.im = 0.;
-#else
-				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
-				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
-#endif
-				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * delta.im;
-				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * delta.re;
-				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
-				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 *  (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
-
-				      delta.re =  fac*smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].re;
-				      delta.im =  fac*smth*DeltaField[((i - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].im;
-#ifdef MODELVEL
-				      vel_prefac.re = DEBA18_prefac(kmag, InitTime);
-				      vel_prefac.im = 0.;
-#else
-				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].re;
-				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].im;
-#endif
-				      Cdata[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * delta.im;
-				      Cdata[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					-kvec[axes] / kmag2 * delta.re;
-				      Cdata2[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
-				      Cdata2[((i - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					-kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
-				    }
-				}
-			    }
-			  else	/* here comes i!=0 : conjugate can be on other processor! */
-			    {
-			      if(i >= Nmesh / 2)
-				continue;
-			      else
-				{
-				  ii = Nmesh - i;
-				  if(ii == Nmesh)
-				    ii = 0;
-				  jj = Nmesh - j;
-				  if(jj == Nmesh)
-				    jj = 0;
-
-				  if(i >= Local_x_start && i < (Local_x_start + Local_nx))
-				    {
-     				      delta.re = fac*smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
-				      delta.im = fac*smth*DeltaField[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
-#ifdef MODELVEL
-				      vel_prefac.re = DEBA18_prefac(kmag, InitTime);
-				      vel_prefac.im = 0.;
-#else
-				      vel_prefac.re =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].re;
-				      vel_prefac.im =  VelPrefac[((i - Local_x_start) * Nmesh + j) * (Nmesh/2 + 1) + k].im;
-#endif
-				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * delta.im;
-				      Cdata[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * delta.re;
-
-				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
-				      Cdata2[((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k].im =
-					kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
-				    }
-
-				  if(ii >= Local_x_start && ii < (Local_x_start + Local_nx))
-				    {
-				      delta.re =  fac*smth*DeltaField[((ii - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].re;
-				      delta.im =  fac*smth*DeltaField[((ii - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].im;
-#ifdef MODELVEL
-				      vel_prefac.re = DEBA18_prefac(kmag, InitTime);
-				      vel_prefac.im = 0.;
-#else
-				      vel_prefac.re =  VelPrefac[((ii - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].re;
-				      vel_prefac.im =  VelPrefac[((ii - Local_x_start) * Nmesh + jj) * (Nmesh/2 + 1) + k].im;
-#endif
-				      
-				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * delta.im;
-				      Cdata[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					-kvec[axes] / kmag2 * delta.re;
-				      
-				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].re =
-					-kvec[axes] / kmag2 * (delta.re*vel_prefac.im + delta.im*vel_prefac.re);
-				      Cdata2[((ii - Local_x_start) * Nmesh + jj) * (Nmesh / 2 + 1) + k].im =
-					-kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
-				    }
-				}
-			    }
-			}
-#endif
 		    }
 		}
 	    }
