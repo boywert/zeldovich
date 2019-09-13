@@ -220,6 +220,7 @@ void displacement_fields(void)
 				kvec[axes] / kmag2 * (delta.re*vel_prefac.re - delta.im*vel_prefac.im);
 			    }
 			}
+			
 		    }
 		}
 	    }
@@ -480,7 +481,7 @@ void prepare_zeldovich(void) {
 	index = (i * Nmesh + j) * (Nmesh / 2 + 1) + k;
 	inv = 1./(DeltaField[index].re*DeltaField[index].re + DeltaField[index].im*DeltaField[index].im);
 	VelPrefac[index].re = (DeltaDotField[index].re*DeltaField[index].re + DeltaDotField[index].im*DeltaField[index].im)*inv;
-	VelPrefac[index].im = (DeltaDotField[index].im*DeltaField[index].re - DeltaDotField[index].re*DeltaField[index].im)*inv;
+	VelPrefac[index].im = (DeltaDotField[index].im*DeltaField[index].re + DeltaDotField[index].re*DeltaField[index].im)*inv;
       }
   
   if(!ThisTask)
